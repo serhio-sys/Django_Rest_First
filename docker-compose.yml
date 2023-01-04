@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: python /code/backend/manage.py runserver 0.0.0.0:8000
+    environment:
+      - SECRET_KEY=REST_API
+      - DEBUG=1
+      - ENVIRONMENT=development
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  
+volumes:
+  postgres_data:
